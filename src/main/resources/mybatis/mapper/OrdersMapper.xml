@@ -16,11 +16,27 @@
         <result column="user_id" property="userId"/>
         <result column="order_status" property="orderStatus"/>
         <result column="payment_method" property="paymentMethod"/>
+
+<!--        <result property="userName" column="userName"/>-->
+<!--        <result property="userPhone" column="userPhone"/>-->
+<!--        <result property="userAddress" column="userAddress"/>-->
+<!--        <result property="userAddressDetail" column="userAddressDetail"/>-->
     </resultMap>
 
 
+<!--    <select id="selectOrderById" resultMap="ordersResultMap">-->
+<!--        SELECT * FROM Orders WHERE order_id = #{orderId}-->
+<!--    </select>-->
     <select id="selectOrderById" resultMap="ordersResultMap">
-        SELECT * FROM Orders WHERE order_id = #{orderId}
+        SELECT
+            o.order_id AS orderId, o.order_code AS orderCode, o.total_price AS totalPrice, o.discount_price AS discountPrice,
+            o.order_status AS orderStatus, o.payment_method AS paymentMethod,
+            ui.name AS userName, ui.tel AS userPhone, a.road_num AS userAddress, a.address AS userAddressDetail
+        FROM Orders o
+                 JOIN User u ON o.user_id = u.user_id
+                 LEFT JOIN UserInfo ui ON u.user_id = ui.user_id
+                 LEFT JOIN Address a ON ui.user_info = a.user_info
+        WHERE o.order_id = #{orderId}
     </select>
 
     <insert id="insertOrder" parameterType="Orders">
